@@ -1,16 +1,7 @@
 #!/bin/bash
-# =============================================================================
-# Frontend VM Provisioning Script — Create React App + PM2 (serve) + Nginx
-# Run once as root (or with sudo) on a fresh GCP Ubuntu VM
-# Usage: sudo bash provision-frontend.sh
-#
-# Uses your existing VM login user as the single app/deploy user.
-# =============================================================================
-
 set -euo pipefail
 
-# Prevent apt/dpkg from hanging on interactive prompts (e.g. needrestart,
-# google-cloud-cli postinst) during unattended provisioning
+
 export DEBIAN_FRONTEND=noninteractive
 
 # ---------- Config — edit these before running ----------
@@ -20,17 +11,12 @@ REPO_URL="https://github.com/VictorOjedokun/todo-frontend.git"
 REPO_BRANCH="master"
 APP_PORT=3001
 NGINX_SERVER_NAME="34.35.16.106"   # or VM public IP
-BACKEND_API_URL="http://34.35.151.43"
+BACKEND_API_URL="http://34.35.151.43/api"
 NODE_VERSION="20"
 # --------------------------------------------------------
 
 echo "==> [1/7] System update"
 
-# google-cloud-cli's postinst script is known to hang indefinitely on GCP
-# images during unattended apt runs (no TTY, tries to configure shell
-# completions / phone home). It's not needed for this deployment.
-# Purge it, hold it (blocks reinstall even if pulled in as a dependency),
-# and disable the Google Cloud apt repo so it can't come back at all.
 echo "==> Disabling Google Cloud apt repo to prevent google-cloud-cli reinstall"
 if [ -f /etc/apt/sources.list.d/google-cloud-sdk.list ]; then
   mv /etc/apt/sources.list.d/google-cloud-sdk.list /etc/apt/sources.list.d/google-cloud-sdk.list.disabled
@@ -73,9 +59,6 @@ chown "$APP_USER":"$APP_USER" "$APP_DIR"
 sudo -u "$APP_USER" git clone --branch "$REPO_BRANCH" "$REPO_URL" "$APP_DIR"
 cd "$APP_DIR"
 
-# Write .env.production with backend URL
-# CRA requires the REACT_APP_ prefix (not NEXT_PUBLIC_) for vars to be
-# baked into the client bundle at build time
 cat > "$APP_DIR/.env.production" <<EOF
 REACT_APP_API_URL=$BACKEND_API_URL
 EOF
@@ -85,8 +68,7 @@ sudo -u "$APP_USER" npm ci
 sudo -u "$APP_USER" npm run build
 
 echo "==> [6/7] Configure PM2 and start app"
-# CRA builds static files into ./build — serve them with the 'serve' package
-# rather than running a Node server (there's no 'next start' equivalent)
+
 cat > "$APP_DIR/ecosystem.config.js" <<EOF
 module.exports = {
   apps: [{
