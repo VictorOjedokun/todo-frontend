@@ -10,8 +10,8 @@ APP_DIR="/var/www/frontend"
 REPO_URL="https://github.com/VictorOjedokun/todo-frontend.git"
 REPO_BRANCH="master"
 APP_PORT=3001
-NGINX_SERVER_NAME="34.35.16.106"   # or VM public IP
-BACKEND_API_URL="http://34.35.151.43/api"
+NGINX_SERVER_NAME="34.35.117.73"   # or VM public IP
+BACKEND_API_URL="http://34.35.187.143/api"
 NODE_VERSION="20"
 # --------------------------------------------------------
 
