@@ -12,7 +12,7 @@ REPO_BRANCH="master"
 APP_PORT=3001
 NGINX_SERVER_NAME="34.35.117.73"   # or VM public IP
 BACKEND_API_URL="http://34.35.187.143/api"
-NODE_VERSION="20"
+NODE_VERSION="20" 
 # --------------------------------------------------------
 
 echo "==> [1/7] System update"
