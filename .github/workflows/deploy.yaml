@@ -1,9 +1,10 @@
-name: Deploy Frontend To GCP VM
+name: Deploy Frontend To GCP
 
 on:
   push:
     branches:
       - master
+      
   workflow_dispatch:
     
 
